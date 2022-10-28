@@ -1,2 +1,0 @@
-# bank
-OOP Django Project
