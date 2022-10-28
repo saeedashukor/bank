@@ -1,0 +1,23 @@
+<h1>Transfer</h1>
+<form action="{% url 'account:transfer' %}" method="post">
+    {% csrf_token %}
+
+    <label>Select <b>source</b> account name/ID</label><br>
+    <select id="source_account" name="source_account">
+    {% for account in account_record %}
+        <option value="{{ account.id }},{{ account.name }}">{{ account.id }} : {{ account.name }}</option>
+    {% endfor %}
+    </select><br><br>
+
+    <label>Select <b>target</b> account name/ID</label><br>
+    <select id="target_account" name="target_account">
+    {% for account in account_record %}
+        <option value="{{ account.id }},{{ account.name }}">{{ account.id }} : {{ account.name }}</option>
+    {% endfor %}
+    </select><br><br>
+
+    <label for="amount">Enter amount you wish to transfer: </label><br>
+    <input type="number" id="amount" name="amount"><br><br>
+
+    <input type="submit" value="Submit">
+</form>

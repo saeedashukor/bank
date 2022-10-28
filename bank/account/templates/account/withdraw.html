@@ -1,0 +1,14 @@
+<h1>Withdraw</h1>
+<form action="{% url 'account:withdraw' %}" method="post">
+    {% csrf_token %}
+    <label>Select account name & ID</label><br>
+    <select id="account" name="account">
+    {% for account in account_record %}
+        <option value="{{ account.id }},{{ account.name }}">{{ account.id }} : {{ account.name }}</option>
+    {% endfor %}
+    </select><br><br>
+    <label for="amount">Enter amount you wish to withdraw: </label><br>
+    <input type="number" id="amount" name="amount"><br><br>
+
+    <input type="submit" value="Submit">
+</form>

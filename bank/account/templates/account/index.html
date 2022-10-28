@@ -1,0 +1,12 @@
+{% if account_records %}
+    <ul>
+    {% for account in account_records %}
+        <li>{{ account.id }} : {{ account.name }}</li>
+    {% endfor %}
+    </ul>
+{% else %}
+    <p>No accounts created.</p>
+{% endif %}
+
+<a href="{% url 'account:withdraw' %}">Withdraw</a> | <a href="{% url 'account:deposit' %}">Deposit</a> |
+<a href="{% url 'account:transfer' %}">Transfer</a>
