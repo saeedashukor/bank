@@ -4,6 +4,7 @@ from django.db import models
 class AccountRecord(models.Model):
     class AccountChoices(models.TextChoices):
         savings = ('SAVINGS', 'savings')
+        super_savings = ('SUPER_SAVINGS', 'super_savings')
         current = ('CURRENT', 'current')
 
     name = models.CharField(max_length=100)

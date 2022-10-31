@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.db.models import Q
 from .models import AccountRecord
 from django.views import generic
 from .business_logic.accounts import accounts
@@ -50,18 +51,26 @@ def transfer(request):
 
 
 def monthly_interest(request):
-    account_id = [account.id for account in AccountRecord.objects.filter(account_type='SAVINGS')]
+    account_id = [account.id for account in AccountRecord.objects.filter(
+        Q(account_type='SAVINGS') | Q(account_type='SUPER_SAVINGS'))]
     balances = {}
     for id_ in account_id:
         name = AccountRecord.objects.get(pk=id_).name
+        account_type = AccountRecord.objects.get(pk=id_).account_type
         balance = accounts[id_].balance
         balances[id_] = {'name': name,
+                         'type': account_type,
                          'balance': balance}
     context = {'acc_balances': balances}
 
     if request.method == 'POST':
-        interest = float(request.POST['interest'])
+        interest = request.POST['interest']
         for i in range(len(account_id)):
-            accounts[account_id[i]].apply_monthly_interest(interest)
+            # If interest rate not specified, use default interest rate based on account_type
+            if not interest or interest == 0.0:
+                default_interest = accounts[account_id[i]].interest_rate
+                accounts[account_id[i]].apply_monthly_interest(default_interest)
+            else:
+                accounts[account_id[i]].apply_monthly_interest(float(interest))
 
     return render(request, 'account/monthly_interest.html', context)

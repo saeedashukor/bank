@@ -1,4 +1,5 @@
 from ..models import AccountRecord, AuditRecord, TransactionRecord
+import abc
 
 
 class Account:
@@ -63,11 +64,7 @@ class Account:
         new_transfer_record.save()
 
 
-class SavingsAccount(Account):
-    def __init__(self, account_id):
-        super().__init__(account_id)
-        self.account_type = 'savings'
-
+class InterestMixin(abc.ABC):
     def apply_monthly_interest(self, monthly_percentage):
         interest = self.balance * (float(monthly_percentage) / 100)
         self.balance += interest
@@ -78,6 +75,20 @@ class SavingsAccount(Account):
                                                            target=account,
                                                            amount=interest)
         new_transaction.save()
+
+
+class SavingsAccount(Account, InterestMixin):
+    def __init__(self, account_id):
+        super().__init__(account_id)
+        self.interest_rate = 0.5  # default interest rate for savings account
+        self.account_type = 'savings'
+
+
+class SuperSavingsAccount(Account, InterestMixin):
+    def __init__(self, account_id):
+        super().__init__(account_id)
+        self.interest_rate = 0.7  # default interest rate for super_savings account
+        self.account_type = 'super_savings'
 
 
 class Accounts:
@@ -97,13 +108,12 @@ class Accounts:
         elif account.account_type == 'SAVINGS':
             return SavingsAccount(account.id)
         else:
-            raise ValueError(account)
+            return SuperSavingsAccount(account.id)
 
     def create_accounts(self):
         account_records = AccountRecord.objects.all()
         for account in account_records:
             self.accounts_dict[account.id] = self.account_factory(account)
-
 
 
 accounts = Accounts()
