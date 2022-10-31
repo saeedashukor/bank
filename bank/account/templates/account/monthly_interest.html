@@ -1,0 +1,13 @@
+<h1>Monthly Interest</h1>
+<h3>Savings account</h3>
+<form action="{% url 'account:monthly_interest' %}" method="post">
+    {% csrf_token %}
+    {% for id, values in acc_balances.items %}
+    <ul> {{ id }} : {{ values.name }}  ||  Balance: {{ values.balance }}</ul>
+    {% endfor %}
+    <br><br>
+    <label for="interest">Enter amount of interest to apply to <b>all</b> savings account:<br>
+        <i>(eg: 1.0 = 1% interest, 0.5 = 0.5% interest)</i></label><br>
+    <input type="number" step="0.1" id="interest" name="interest"><br><br>
+    <input type="submit" value="Submit">
+</form>

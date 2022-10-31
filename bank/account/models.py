@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
 class AccountRecord(models.Model):
     class AccountChoices(models.TextChoices):
         savings = ('SAVINGS', 'savings')
@@ -19,6 +18,7 @@ class TransactionRecord(models.Model):
         deposit = ('DEPOSIT', 'deposit')
         withdraw = ('WITHDRAW', 'withdraw')
         transfer = ('TRANSFER', 'transfer')
+        interest = ('INTEREST', 'interest')
 
     transaction_type = models.CharField(max_length=32, choices=TransactionChoices.choices)
     source = models.ForeignKey(AccountRecord, related_name='source', on_delete=models.CASCADE, null=True, blank=True)
