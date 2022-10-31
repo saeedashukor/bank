@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .models import AccountRecord, AuditRecord, TransactionRecord
+from .models import AccountRecord
 from django.views import generic
 from .business_logic.accounts import accounts
 
@@ -47,3 +47,21 @@ def transfer(request):
         accounts[target_id].transfer_in(amount, source_id)
 
     return render(request, 'account/transfer.html', context)
+
+
+def monthly_interest(request):
+    account_id = [account.id for account in AccountRecord.objects.filter(account_type='SAVINGS')]
+    balances = {}
+    for id_ in account_id:
+        name = AccountRecord.objects.get(pk=id_).name
+        balance = accounts[id_].balance
+        balances[id_] = {'name': name,
+                         'balance': balance}
+    context = {'acc_balances': balances}
+
+    if request.method == 'POST':
+        interest = float(request.POST['interest'])
+        for i in range(len(account_id)):
+            accounts[account_id[i]].apply_monthly_interest(interest)
+
+    return render(request, 'account/monthly_interest.html', context)

@@ -64,7 +64,8 @@ class Account:
 
 
 class SavingsAccount(Account):
-    def __init__(self):
+    def __init__(self, account_id):
+        super().__init__(account_id)
         self.account_type = 'savings'
 
     def apply_monthly_interest(self, monthly_percentage):
@@ -79,7 +80,6 @@ class SavingsAccount(Account):
         new_transaction.save()
 
 
-
 class Accounts:
 
     def __init__(self):
@@ -89,10 +89,21 @@ class Accounts:
         self.create_accounts()
         return self.accounts_dict[item]
 
+    # Factory Method is a design pattern used to create concrete implementations of a common interface
+    # It separates the process of creating an object from the code that depends on the interface of the project
+    def account_factory(self, account):
+        if account.account_type == 'CURRENT':
+            return Account(account.id)
+        elif account.account_type == 'SAVINGS':
+            return SavingsAccount(account.id)
+        else:
+            raise ValueError(account)
+
     def create_accounts(self):
         account_records = AccountRecord.objects.all()
         for account in account_records:
-            self.accounts_dict[account.id] = Account(account.id)
+            self.accounts_dict[account.id] = self.account_factory(account)
+
 
 
 accounts = Accounts()

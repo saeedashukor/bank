@@ -1,7 +1,6 @@
 from django.db import models
 
 
-# Create your models here.
 class AccountRecord(models.Model):
     class AccountChoices(models.TextChoices):
         savings = ('SAVINGS', 'savings')
