@@ -3,10 +3,10 @@ from ..models import AccountRecord, AuditRecord, TransactionRecord
 
 class Account:
 
-    def __init__(self, account_id, account_type):
+    def __init__(self, account_id):
         self.account_id = account_id
         self._balance = self.calc_balance()
-        self.account_type = account_type
+        self.account_type = 'current'
 
     @property
     def balance(self):
@@ -68,7 +68,16 @@ class SavingsAccount(Account):
         self.account_type = 'savings'
 
     def apply_monthly_interest(self, monthly_percentage):
-        interest = self.balance * (monthly_percentage / 100)
+        interest = self.balance * (float(monthly_percentage) / 100)
+        self.balance += interest
+
+        account = AccountRecord.objects.get(pk=self.account_id)
+        new_transaction = TransactionRecord.objects.create(transaction_type='INTEREST',
+                                                           source=None,
+                                                           target=account,
+                                                           amount=interest)
+        new_transaction.save()
+
 
 
 class Accounts:
